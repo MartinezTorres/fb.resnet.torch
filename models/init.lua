@@ -13,6 +13,7 @@
 require 'nn'
 require 'cunn'
 require 'cudnn'
+require 'EMDCriterion'
 
 local M = {}
 
@@ -94,8 +95,9 @@ function M.setup(opt, checkpoint)
       model = dpt:type(opt.tensorType)
    end
 
-   local criterion = nn.CrossEntropyCriterion():type(opt.tensorType)
-   return model, criterion
+--   local criterion = nn.CrossEntropyCriterion():type(opt.tensorType)
+   local criterion = nn.EMDCriterion{A=torch.FloatTensor(torch.FloatStorage(opt.data .. "/A.blob")), norm="softmax"}
+   return model, criterion:type(opt.tensorType)
 end
 
 function M.shareGradInput(model, opt)
